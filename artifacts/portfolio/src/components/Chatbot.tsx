@@ -1,186 +1,162 @@
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Send, User, Bot, Sparkles } from "lucide-react";
 
 type Message = {
   id: string;
-  role: "user" | "bot";
-  content: string;
+  text: string;
+  isUser: boolean;
 };
 
 const QA_DATABASE: Record<string, string> = {
-  "What did you build at Gatepax AI?": "At Gatepax, I owned the frontend for a real-time voice assistant — built with WebRTC and OpenAI APIs for sub-second interactions. I also redesigned the Stripe checkout flow and set up CI/CD with GitHub Actions.",
-  "Tell me about the B-Roll project": "Smart B-Roll Inserter is an AI video editing assistant. It uses Whisper for speech recognition, GPT-4o for visual scene understanding, and vector embeddings to semantically match A-roll speech with relevant B-roll footage. FFmpeg handles the frame extraction and clip insertion.",
-  "What's your approach to product?": "I think like a product owner. Before writing a line of code, I map user flows, identify friction points, and define success metrics. At Recyclaro, I re-architected the entire IA into role-based, intent-driven flows — which reduced drop-offs and improved navigation clarity.",
-  "What tech do you use?": "React, Next.js, Node.js, Express, WebRTC, WebSockets, OpenAI APIs, Tailwind CSS, Docker, and CI/CD via GitHub Actions. I'm comfortable across the stack — from system design to pixel-level UI.",
-  "Are you open to work?": "Yes! I'm looking for frontend or full-stack engineering roles where product thinking is valued. Let's build something impactful together.",
+  "projects": "Gatepax AI (Voice Assistant), Smart B-Roll Inserter (AI Video), AiVoiceSDR (Sales Agent).",
+  "skills": "React, WebRTC, OpenAI APIs, Node.js, FFmpeg, Framer Motion, Tailwind.",
+  "about": "Frontend + Product Engineer. Currently interning at Recyclaro doing UX audits. Codeforces Specialist.",
+  "contact": "Email me at rajaiswaldev24@gmail.com or find me on GitHub/LinkedIn.",
+  "help": "Available commands: projects, skills, about, contact, clear"
 };
 
-const SUGGESTIONS = [
-  "What did you build at Gatepax AI?",
-  "Tell me about the B-Roll project",
-  "What's your approach to product?",
-  "What tech do you use?",
-  "Are you open to work?"
-];
+const SUGGESTIONS = ["projects", "skills", "about", "contact"];
 
 export function Chatbot() {
   const [messages, setMessages] = useState<Message[]>([
-    { id: "1", role: "bot", content: "Hi, I'm Raj's AI assistant. Ask me anything about his work, skills, or background." }
+    { id: "1", text: "Welcome to RAJ_OS v1.0", isUser: false },
+    { id: "2", text: "Type 'help' for a list of commands or ask a question.", isUser: false }
   ]);
-  const [inputValue, setInputValue] = useState("");
+  const [input, setInput] = useState("");
   const [isTyping, setIsTyping] = useState(false);
-  const messagesEndRef = useRef<HTMLDivElement>(null);
-
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  };
+  const inputRef = useRef<HTMLInputElement>(null);
+  const endRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    scrollToBottom();
+    endRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, isTyping]);
 
-  const handleSend = (text: string) => {
-    if (!text.trim()) return;
+  const handleCommand = (cmd: string) => {
+    if (!cmd.trim()) return;
 
-    const userMsg: Message = { id: Date.now().toString(), role: "user", content: text };
+    const userMsg: Message = { id: Date.now().toString(), text: cmd, isUser: true };
     setMessages(prev => [...prev, userMsg]);
-    setInputValue("");
-    setIsTyping(true);
+    setInput("");
 
-    // Find best match or default response
-    let response = "I'm a limited demo bot, so I only know specific things about Raj. Try asking one of the suggested questions!";
-    const exactMatch = QA_DATABASE[text];
-    
-    if (exactMatch) {
-      response = exactMatch;
-    } else {
-      // Fuzzy match
-      const lowerText = text.toLowerCase();
-      if (lowerText.includes("gatepax") || lowerText.includes("voice")) {
-        response = QA_DATABASE["What did you build at Gatepax AI?"];
-      } else if (lowerText.includes("b-roll") || lowerText.includes("video")) {
-        response = QA_DATABASE["Tell me about the B-Roll project"];
-      } else if (lowerText.includes("product") || lowerText.includes("approach")) {
-        response = QA_DATABASE["What's your approach to product?"];
-      } else if (lowerText.includes("tech") || lowerText.includes("stack") || lowerText.includes("skills")) {
-        response = QA_DATABASE["What tech do you use?"];
-      } else if (lowerText.includes("work") || lowerText.includes("hire") || lowerText.includes("job")) {
-        response = QA_DATABASE["Are you open to work?"];
-      }
+    if (cmd.toLowerCase() === "clear") {
+      setMessages([]);
+      return;
     }
 
+    setIsTyping(true);
+
+    // Simulate thinking/typing
     setTimeout(() => {
+      let response = "Command not recognized. Type 'help' for available commands.";
+      const lowerCmd = cmd.toLowerCase().trim();
+      
+      if (QA_DATABASE[lowerCmd]) {
+        response = QA_DATABASE[lowerCmd];
+      } else {
+        // fuzzy check
+        if (lowerCmd.includes("project")) response = QA_DATABASE["projects"];
+        if (lowerCmd.includes("skill") || lowerCmd.includes("tech")) response = QA_DATABASE["skills"];
+        if (lowerCmd.includes("who")) response = QA_DATABASE["about"];
+      }
+
+      setMessages(prev => [...prev, { id: (Date.now() + 1).toString(), text: response, isUser: false }]);
       setIsTyping(false);
-      setMessages(prev => [...prev, { id: (Date.now() + 1).toString(), role: "bot", content: response }]);
-    }, 1000);
+      
+      // Auto-focus input after reply
+      setTimeout(() => inputRef.current?.focus(), 10);
+    }, 600);
   };
 
   return (
-    <section className="py-24 px-6 md:px-12 lg:px-24 max-w-5xl mx-auto">
+    <section className="py-24 px-6 md:px-12 lg:px-24 max-w-4xl mx-auto">
       <motion.div 
-        initial={{ opacity: 0, y: 20 }}
+        initial={{ opacity: 0, y: 50 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
-        transition={{ duration: 0.8 }}
-        className="mb-12"
+        transition={{ type: "spring", stiffness: 100, damping: 15 }}
       >
-        <div className="flex items-center gap-3 mb-4">
-          <Sparkles className="text-primary" size={24} />
-          <h2 className="text-3xl md:text-4xl font-bold tracking-tight">Interactive Experience</h2>
-        </div>
-        <p className="text-muted-foreground">Have a conversation with my portfolio.</p>
-      </motion.div>
+        <h2 className="text-4xl md:text-6xl font-display uppercase tracking-tighter mb-8 text-secondary-foreground text-center">
+          Interactive Terminal
+        </h2>
 
-      <div className="bg-card border border-border rounded-2xl overflow-hidden shadow-2xl flex flex-col h-[600px] max-h-[70vh]">
-        {/* Header */}
-        <div className="bg-background/50 border-b border-border p-4 flex items-center gap-3 backdrop-blur-md">
-          <div className="w-3 h-3 rounded-full bg-red-500" />
-          <div className="w-3 h-3 rounded-full bg-yellow-500" />
-          <div className="w-3 h-3 rounded-full bg-green-500" />
-          <div className="ml-4 text-sm font-mono text-muted-foreground flex items-center gap-2">
-            <Bot size={16} className="text-primary" /> raj-assistant-v1.0
-          </div>
-        </div>
-
-        {/* Messages */}
-        <div className="flex-1 overflow-y-auto p-6 space-y-6">
-          <AnimatePresence initial={false}>
-            {messages.map((msg) => (
-              <motion.div
-                key={msg.id}
-                initial={{ opacity: 0, y: 10, scale: 0.95 }}
-                animate={{ opacity: 1, y: 0, scale: 1 }}
-                className={`flex gap-4 ${msg.role === "user" ? "flex-row-reverse" : "flex-row"}`}
-              >
-                <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${msg.role === "user" ? "bg-primary text-primary-foreground" : "bg-secondary text-secondary-foreground"}`}>
-                  {msg.role === "user" ? <User size={16} /> : <Bot size={16} />}
-                </div>
-                <div className={`max-w-[80%] rounded-2xl p-4 text-[15px] leading-relaxed ${
-                  msg.role === "user" 
-                    ? "bg-primary text-primary-foreground rounded-tr-sm" 
-                    : "bg-secondary/50 text-foreground border border-border rounded-tl-sm"
-                }`}>
-                  {msg.content}
-                </div>
-              </motion.div>
-            ))}
-          </AnimatePresence>
+        <div className="bg-[#0a0a0a] rounded-lg border-[6px] border-primary p-2 overflow-hidden shadow-2xl transform rotate-1 hover:rotate-0 transition-transform duration-300">
           
-          {isTyping && (
-            <motion.div 
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className="flex gap-4 flex-row"
-            >
-              <div className="w-8 h-8 rounded-full bg-secondary text-secondary-foreground flex items-center justify-center shrink-0">
-                <Bot size={16} />
-              </div>
-              <div className="bg-secondary/50 border border-border rounded-2xl rounded-tl-sm p-4 flex gap-1 items-center">
-                <motion.div className="w-2 h-2 rounded-full bg-muted-foreground" animate={{ y: [0, -5, 0] }} transition={{ repeat: Infinity, duration: 0.6, delay: 0 }} />
-                <motion.div className="w-2 h-2 rounded-full bg-muted-foreground" animate={{ y: [0, -5, 0] }} transition={{ repeat: Infinity, duration: 0.6, delay: 0.2 }} />
-                <motion.div className="w-2 h-2 rounded-full bg-muted-foreground" animate={{ y: [0, -5, 0] }} transition={{ repeat: Infinity, duration: 0.6, delay: 0.4 }} />
-              </div>
-            </motion.div>
-          )}
-          <div ref={messagesEndRef} />
-        </div>
+          {/* Terminal Window */}
+          <div className="bg-[#111] h-[500px] font-mono text-[#0f0] p-6 flex flex-col rounded text-sm md:text-base relative overflow-hidden">
+            
+            {/* Scanline effect */}
+            <div className="absolute inset-0 bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(255,0,0,0.06),rgba(0,255,0,0.02),rgba(0,0,255,0.06))] bg-[length:100%_4px,3px_100%] pointer-events-none z-10" />
 
-        {/* Input Area */}
-        <div className="p-4 bg-background/50 border-t border-border backdrop-blur-md">
-          <div className="flex flex-wrap gap-2 mb-4">
-            {SUGGESTIONS.map((suggestion, i) => (
+            <div className="flex-1 overflow-y-auto space-y-4 pb-4 z-20">
+              <AnimatePresence>
+                {messages.map((msg) => (
+                  <motion.div
+                    key={msg.id}
+                    initial={{ opacity: 0, x: -10 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    className="flex gap-2"
+                  >
+                    <span className="text-[#0a0] shrink-0">
+                      {msg.isUser ? "guest@portfolio:~$" : "raj@os:~$"}
+                    </span>
+                    <span className={msg.isUser ? "text-white" : "text-[#0f0]"}>
+                      {msg.text}
+                    </span>
+                  </motion.div>
+                ))}
+              </AnimatePresence>
+              
+              {isTyping && (
+                <div className="flex gap-2">
+                  <span className="text-[#0a0]">raj@os:~$</span>
+                  <motion.span 
+                    animate={{ opacity: [0, 1, 0] }} 
+                    transition={{ repeat: Infinity, duration: 0.8 }}
+                    className="bg-[#0f0] w-2 h-5 inline-block"
+                  />
+                </div>
+              )}
+              <div ref={endRef} />
+            </div>
+
+            <form 
+              onSubmit={(e) => { e.preventDefault(); handleCommand(input); }}
+              className="flex items-center gap-2 border-t border-[#333] pt-4 mt-2 z-20"
+            >
+              <span className="text-[#0a0] shrink-0">guest@portfolio:~$</span>
+              <input
+                ref={inputRef}
+                type="text"
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                className="flex-1 bg-transparent border-none outline-none text-white focus:ring-0 p-0 font-mono caret-transparent"
+                autoComplete="off"
+                spellCheck="false"
+              />
+              <motion.span 
+                animate={{ opacity: [1, 0] }} 
+                transition={{ repeat: Infinity, duration: 0.8 }}
+                className="bg-white w-2 h-5 inline-block -ml-[calc(100%-1ch)]"
+                style={{ marginLeft: `-${Math.max(1, input.length)}ch`}}
+              />
+            </form>
+          </div>
+
+          {/* Quick Commands below terminal */}
+          <div className="flex flex-wrap gap-2 mt-4 px-2">
+            {SUGGESTIONS.map(cmd => (
               <button
-                key={i}
-                onClick={() => handleSend(suggestion)}
-                className="text-xs py-1.5 px-3 rounded-full bg-secondary/50 border border-border hover:border-primary/50 hover:bg-secondary text-muted-foreground hover:text-foreground transition-colors"
+                key={cmd}
+                onClick={() => handleCommand(cmd)}
+                className="bg-primary text-primary-foreground font-mono text-xs px-3 py-1 font-bold uppercase hover:bg-white hover:text-black transition-colors"
               >
-                {suggestion}
+                ./{cmd}.sh
               </button>
             ))}
           </div>
-          
-          <form 
-            onSubmit={(e) => { e.preventDefault(); handleSend(inputValue); }}
-            className="relative flex items-center"
-          >
-            <input
-              type="text"
-              value={inputValue}
-              onChange={(e) => setInputValue(e.target.value)}
-              placeholder="Ask anything..."
-              className="w-full bg-secondary/30 border border-border rounded-xl py-3 pl-4 pr-12 focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-all text-white placeholder:text-muted-foreground"
-            />
-            <button 
-              type="submit"
-              disabled={!inputValue.trim() || isTyping}
-              className="absolute right-2 p-2 text-muted-foreground hover:text-primary disabled:opacity-50 disabled:hover:text-muted-foreground transition-colors"
-            >
-              <Send size={18} />
-            </button>
-          </form>
+
         </div>
-      </div>
+      </motion.div>
     </section>
   );
 }
