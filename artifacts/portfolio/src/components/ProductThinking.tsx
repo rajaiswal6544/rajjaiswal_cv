@@ -1,21 +1,21 @@
 import { motion } from "framer-motion";
 
-const steps = [
+const principles = [
   {
-    label: "USER",
-    content: "Who is this for and what is their immediate goal?"
+    title: "Friction is a feature bug.",
+    content: "Every extra click is a conversion risk. I map drop-off points before writing code."
   },
   {
-    label: "FRICTION",
-    content: "Where do they drop off? What causes cognitive overload?"
+    title: "Design for intent, not features.",
+    content: "Features exist to serve user goals. I re-architect around what users are actually trying to do."
   },
   {
-    label: "FLOW",
-    content: "Mapping the path of least resistance to value."
+    title: "Measure, then move.",
+    content: "UX improvements without metrics are guesses. I define success criteria before building."
   },
   {
-    label: "OUTCOME",
-    content: "The measurable impact on retention and intent."
+    title: "Constraints are creative inputs.",
+    content: "WebRTC latency limits? That's not a problem — it's the product design constraint that shaped everything."
   }
 ];
 
@@ -29,42 +29,81 @@ export function ProductThinking() {
 
       <div className="max-w-6xl mx-auto relative z-10">
         <motion.div 
-          initial={{ opacity: 0, y: 50 }}
+          initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
+          viewport={{ once: true, margin: "-50px" }}
           transition={{ type: "spring", stiffness: 100, damping: 15 }}
           className="mb-20 text-center"
         >
-          <h2 className="text-5xl md:text-7xl font-display uppercase tracking-tighter mb-6">Product Thinking</h2>
-          <p className="text-xl md:text-3xl font-sans font-medium max-w-3xl mx-auto p-4 border-4 border-secondary border-dashed rotate-1 bg-background hover-target">
-            Taking the Recyclaro UX Audit approach: moving from feature-based navigation to role-based, intent-driven flows.
-          </p>
+          <div className="inline-block bg-primary text-primary-foreground p-4 border-4 border-secondary transform rotate-2 mb-6">
+            <h2 className="text-5xl md:text-7xl font-display uppercase tracking-tighter">Product Thinking</h2>
+          </div>
         </motion.div>
 
-        {/* Whiteboard / Sketchbook Layout */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 md:gap-4 relative">
+        {/* Before / After Audit Flow */}
+        <div className="mb-32">
+          <div className="text-center mb-8">
+            <span className="bg-foreground text-background font-mono text-sm font-bold px-4 py-1 uppercase tracking-widest inline-block transform -rotate-1 border-2 border-foreground">RECYCLARO UX AUDIT</span>
+          </div>
           
-          {/* Connecting arrow line for desktop */}
-          <div className="hidden md:block absolute top-1/2 left-0 w-full h-[4px] bg-foreground border-dashed border-b-4 border-transparent z-0 -translate-y-1/2" />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-0 border-4 border-foreground shadow-[12px_12px_0px_0px_rgba(0,0,0,1)] dark:shadow-[12px_12px_0px_0px_rgba(255,255,255,1)]">
+            
+            {/* Before */}
+            <div className="bg-muted p-8 md:p-12 border-b-4 md:border-b-0 md:border-r-4 border-foreground opacity-80 filter grayscale">
+              <h3 className="font-display text-3xl uppercase mb-8 text-muted-foreground tracking-tight">Before</h3>
+              <div className="space-y-4 font-mono font-medium text-sm text-foreground">
+                <div className="p-4 border-2 border-foreground bg-background">Feature-based navigation</div>
+                <div className="text-center text-xl">↓</div>
+                <div className="p-4 border-2 border-foreground bg-background">Users scan all options</div>
+                <div className="text-center text-xl">↓</div>
+                <div className="p-4 border-2 border-foreground bg-background">Cognitive overload</div>
+                <div className="text-center text-xl">↓</div>
+                <div className="p-4 border-2 border-foreground bg-background">Drop-off at 3rd step</div>
+                <div className="text-center text-xl">↓</div>
+                <div className="p-4 border-2 border-destructive bg-destructive/10 text-destructive font-bold">35% task abandonment</div>
+              </div>
+            </div>
 
-          {steps.map((step, i) => (
+            {/* After */}
+            <div className="bg-primary text-primary-foreground p-8 md:p-12">
+              <h3 className="font-display text-3xl uppercase mb-8 tracking-tight">After</h3>
+              <div className="space-y-4 font-mono font-bold text-sm">
+                <div className="p-4 border-2 border-foreground bg-background text-foreground">Role-based entry (What are you here to do?)</div>
+                <div className="text-center text-xl">↓</div>
+                <div className="p-4 border-2 border-foreground bg-background text-foreground">Intent-driven IA</div>
+                <div className="text-center text-xl">↓</div>
+                <div className="p-4 border-2 border-foreground bg-background text-foreground">Reduced options per screen</div>
+                <div className="text-center text-xl">↓</div>
+                <div className="p-4 border-2 border-foreground bg-background text-foreground">Single clear CTA per step</div>
+                <div className="text-center text-xl">↓</div>
+                <div className="p-4 border-2 border-foreground bg-foreground text-background font-bold">Navigation drop-offs reduced</div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        {/* 2x2 Principles Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {principles.map((principle, i) => (
             <motion.div 
               key={i}
-              initial={{ opacity: 0, scale: 0.8, rotate: Math.random() * 10 - 5 }}
-              whileInView={{ opacity: 1, scale: 1, rotate: (i % 2 === 0 ? 2 : -2) }}
-              viewport={{ once: true }}
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-50px" }}
               transition={{ type: "spring", stiffness: 100, damping: 15, delay: i * 0.1 }}
-              className="relative z-10 bg-background border-4 border-foreground p-6 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] dark:shadow-[6px_6px_0px_0px_rgba(255,255,255,1)] flex flex-col h-full hover:bg-primary hover:text-primary-foreground transition-colors group"
+              className="bg-background border-4 border-foreground p-8 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] dark:shadow-[6px_6px_0px_0px_rgba(255,255,255,1)] hover:bg-primary hover:text-primary-foreground transition-colors group"
             >
-              <div className="text-3xl font-display mb-4 border-b-4 border-foreground pb-2 group-hover:border-primary-foreground">
-                {step.label}
+              <div className="font-display text-2xl uppercase tracking-tight mb-4 text-foreground group-hover:text-primary-foreground">
+                {principle.title}
               </div>
-              <p className="font-mono text-sm leading-relaxed font-medium">
-                {step.content}
+              <p className="font-sans font-medium text-lg leading-relaxed text-muted-foreground group-hover:text-primary-foreground">
+                {principle.content}
               </p>
             </motion.div>
           ))}
         </div>
+
       </div>
     </section>
   );

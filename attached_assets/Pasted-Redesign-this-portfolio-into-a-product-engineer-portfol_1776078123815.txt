@@ -1,0 +1,86 @@
+Redesign this portfolio into a product engineer portfolio that emphasizes thinking, decision-making, and impact over projects and tech stacks.
+
+Do NOT treat this as a developer portfolio. Treat it as a product case study experience.
+
+Core Goal:
+Make recruiters understand how I think, not just what I built.
+
+Design Direction:
+- Maintain brutalist + neon aesthetic
+- Reduce visual noise where it doesn’t add meaning
+- Increase clarity, hierarchy, and storytelling
+- Every section should answer: “Why does this matter?”
+
+STRUCTURAL IMPROVEMENTS:
+
+1. HERO SECTION:
+- Keep bold identity
+- Add a sharper positioning line:
+  "I design systems, not just screens"
+- Add subtle interactive motion that reacts to cursor
+
+2. SELECTED WORK → TRANSFORM INTO CASE STUDIES:
+Replace project cards with structured narratives:
+
+Each project must include:
+- Context: What problem existed?
+- Constraint: What made it hard?
+- Decision: What did I choose and why?
+- Trade-offs: What did I sacrifice?
+- Outcome: Measurable impact
+
+Add expandable sections for depth.
+
+3. PRODUCT THINKING → MAKE IT TANGIBLE:
+- Replace generic text with:
+  - Before vs After flows
+  - Friction points
+  - Decision reasoning
+- Add visual journey maps
+
+4. INTERACTIVE SECTION → MAKE IT MEANINGFUL:
+Replace terminal with:
+- AI assistant OR system simulator
+Examples:
+- Ask questions about my projects
+- Simulate a real-time system (voice AI, pipeline)
+
+5. ARCHITECTURE SECTION → MAKE IT INTERACTIVE:
+- Add hover/click interactions:
+  - show data flow
+  - highlight bottlenecks
+- Add reasoning:
+  - why this architecture?
+  - alternatives considered
+
+6. REMOVE GENERIC ELEMENTS:
+- Remove skill bars, generic descriptions, filler text
+- Avoid listing tech without context
+
+7. ADD “HOW I THINK” SECTION:
+- Show:
+  - how I approach problems
+  - how I break down systems
+  - how I prioritize trade-offs
+
+8. ADD METRICS EVERYWHERE:
+- latency improvements
+- UX improvements
+- system performance
+- user impact
+
+9. CTA SECTION:
+Make it sharp and opinionated:
+Example:
+"If you're building real products, not just features — we should talk."
+
+INTERACTION RULES:
+- Every animation must have purpose
+- Avoid decorative motion
+- Use motion to guide attention
+
+OUTPUT:
+- Updated layout structure
+- Improved copy for each section
+- Interaction suggestions
+- Component-level breakdown

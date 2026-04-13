@@ -6,6 +6,7 @@ import { SelectedWork } from "@/components/SelectedWork";
 import { ProductThinking } from "@/components/ProductThinking";
 import { Chatbot } from "@/components/Chatbot";
 import { TechnicalDepth } from "@/components/TechnicalDepth";
+import { HowIThink } from "@/components/HowIThink";
 import { About } from "@/components/About";
 import { CTA } from "@/components/CTA";
 
@@ -76,10 +77,11 @@ function Home() {
         <SelectedWork />
       </div>
       <ProductThinking />
-      <div className="bg-secondary text-secondary-foreground py-20">
+      <div className="bg-[#0D0D0D] text-white py-20">
         <Chatbot />
       </div>
       <TechnicalDepth />
+      <HowIThink />
       <About />
       <CTA />
     </div>
@@ -87,8 +89,6 @@ function Home() {
 }
 
 function App() {
-  // We want a light mode base, but some sections are dark.
-  // We'll remove the forced dark mode.
   useEffect(() => {
     document.documentElement.classList.remove('dark');
   }, []);

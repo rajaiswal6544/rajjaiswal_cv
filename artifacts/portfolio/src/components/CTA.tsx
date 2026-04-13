@@ -1,4 +1,4 @@
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 
 export function CTA() {
@@ -10,52 +10,62 @@ export function CTA() {
       />
       
       <motion.div 
-        initial={{ opacity: 0, scale: 0.8 }}
-        whileInView={{ opacity: 1, scale: 1 }}
-        viewport={{ once: true }}
+        initial={{ opacity: 0, y: 30 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: "-50px" }}
         transition={{ type: "spring", stiffness: 100, damping: 15 }}
         className="relative z-10 w-full max-w-7xl"
       >
-        <div className="font-display font-black uppercase flex flex-col items-center">
-          <motion.div 
-            whileHover={{ scale: 1.05, rotate: 2 }}
-            className="text-[12vw] leading-[0.8] tracking-tighter hover-target cursor-none mb-4"
-          >
-            LET'S BUILD
-          </motion.div>
-          <motion.div 
-            whileHover={{ scale: 1.05, rotate: -2 }}
-            className="text-[15vw] leading-[0.8] tracking-tighter text-background text-stroke-primary hover-target cursor-none mb-4"
-            style={{ WebkitTextStroke: '4px currentColor' }}
-          >
-            SOMETHING
-          </motion.div>
-          <motion.div 
-            whileHover={{ scale: 1.05, rotate: 1 }}
-            className="text-[14vw] leading-[0.8] tracking-tighter bg-background text-foreground px-4 border-8 border-foreground hover-target cursor-none shadow-[20px_20px_0px_0px_rgba(0,0,0,1)] dark:shadow-[20px_20px_0px_0px_rgba(255,255,255,1)]"
-          >
-            IMPACTFUL.
-          </motion.div>
+        <div className="font-display uppercase flex flex-col items-center">
+          <div className="text-4xl md:text-6xl italic font-serif lowercase tracking-normal mb-2 text-foreground/80">
+            If you're building real products,
+          </div>
+          <div className="text-[12vw] leading-[0.8] tracking-tighter text-background text-stroke-primary font-black my-4 cursor-none" style={{ WebkitTextStroke: '4px currentColor' }}>
+            NOT JUST FEATURES —
+          </div>
+          <div className="text-6xl md:text-8xl leading-[0.8] tracking-tighter bg-background text-foreground px-6 py-2 border-8 border-foreground shadow-[12px_12px_0px_0px_rgba(0,0,0,1)] dark:shadow-[12px_12px_0px_0px_rgba(255,255,255,1)]">
+            we should talk.
+          </div>
         </div>
 
-        <div className="mt-24 space-y-8 flex flex-col items-center">
-          <p className="text-2xl md:text-4xl font-sans font-medium max-w-2xl bg-foreground text-background p-4 transform -rotate-1">
-            Open to frontend, full-stack, and product engineering roles.
+        <div className="mt-24 flex flex-col items-center">
+          <p className="text-xl md:text-2xl font-sans font-medium max-w-3xl mb-16 p-6 border-4 border-foreground bg-background text-foreground shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
+            I join teams where engineering decisions are made with users in mind. Where 'done' means shipped, measured, and iterated — not just merged.
           </p>
 
-          <a 
-            href="mailto:rajaiswaldev24@gmail.com"
-            className="group relative inline-flex items-center justify-center gap-4 bg-background text-foreground px-12 py-6 border-8 border-foreground shadow-[12px_12px_0px_0px_rgba(0,0,0,1)] dark:shadow-[12px_12px_0px_0px_rgba(255,255,255,1)] font-display text-4xl uppercase hover-target transform rotate-2 transition-all hover:rotate-0 hover:translate-y-2 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:hover:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)] cursor-none"
-          >
-            Email Me <ArrowRight size={40} className="group-hover:translate-x-4 transition-transform" />
-          </a>
+          <div className="space-y-6 flex flex-col items-center w-full">
+            <a 
+              href="mailto:rajaiswaldev24@gmail.com"
+              className="group relative inline-block font-display text-4xl md:text-6xl uppercase hover-target transition-all cursor-none overflow-hidden"
+            >
+              <span className="relative z-10 text-foreground group-hover:text-background transition-colors mix-blend-difference">rajaiswaldev24@gmail.com →</span>
+              <span className="absolute bottom-0 left-0 w-full h-[4px] bg-foreground group-hover:h-full transition-all duration-300 ease-out z-0"></span>
+            </a>
+            
+            <div className="flex gap-12 mt-8">
+              <a 
+                href="#"
+                className="group relative inline-block font-display text-3xl uppercase hover-target transition-all cursor-none overflow-hidden"
+              >
+                <span className="relative z-10 text-foreground group-hover:text-background transition-colors mix-blend-difference">GitHub</span>
+                <span className="absolute bottom-0 left-0 w-full h-[4px] bg-foreground group-hover:h-full transition-all duration-300 ease-out z-0"></span>
+              </a>
+              <a 
+                href="#"
+                className="group relative inline-block font-display text-3xl uppercase hover-target transition-all cursor-none overflow-hidden"
+              >
+                <span className="relative z-10 text-foreground group-hover:text-background transition-colors mix-blend-difference">LinkedIn</span>
+                <span className="absolute bottom-0 left-0 w-full h-[4px] bg-foreground group-hover:h-full transition-all duration-300 ease-out z-0"></span>
+              </a>
+            </div>
+          </div>
         </div>
       </motion.div>
 
       {/* Footer Marquee */}
       <div className="absolute bottom-0 left-0 w-full overflow-hidden whitespace-nowrap bg-foreground text-background py-4 border-t-8 border-background z-20">
         <div className="animate-marquee inline-block font-mono text-xl tracking-widest uppercase font-bold">
-          AVAILABLE FOR WORK · BASED IN INDIA · RAJ JAISWAL © 2024 · AVAILABLE FOR WORK · BASED IN INDIA · RAJ JAISWAL © 2024 · AVAILABLE FOR WORK · BASED IN INDIA · RAJ JAISWAL © 2024 ·
+          PRODUCT THINKING · SYSTEMS DESIGN · REAL-TIME AI · WEBRTC · OPENAI APIS · FRONTEND ENGINEERING · AVAILABLE FOR WORK · PRODUCT THINKING · SYSTEMS DESIGN · REAL-TIME AI · WEBRTC · OPENAI APIS · FRONTEND ENGINEERING · AVAILABLE FOR WORK · 
         </div>
       </div>
     </section>

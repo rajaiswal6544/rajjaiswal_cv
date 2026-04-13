@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { Send, Sparkles } from "lucide-react";
 
 type Message = {
   id: string;
@@ -8,23 +9,44 @@ type Message = {
 };
 
 const QA_DATABASE: Record<string, string> = {
-  "projects": "Gatepax AI (Voice Assistant), Smart B-Roll Inserter (AI Video), AiVoiceSDR (Sales Agent).",
-  "skills": "React, WebRTC, OpenAI APIs, Node.js, FFmpeg, Framer Motion, Tailwind.",
-  "about": "Frontend + Product Engineer. Currently interning at Recyclaro doing UX audits. Codeforces Specialist.",
-  "contact": "Email me at rajaiswaldev24@gmail.com or find me on GitHub/LinkedIn.",
-  "help": "Available commands: projects, skills, about, contact, clear"
+  "gatepax": "At Gatepax, I owned the voice AI frontend. The key engineering decision was skipping REST and going direct WebRTC → Whisper streaming. Average round-trip came in under 500ms. I also redesigned the Stripe checkout flow — removed 2 steps, reduced drop-off.",
+  "voice": "At Gatepax, I owned the voice AI frontend. The key engineering decision was skipping REST and going direct WebRTC → Whisper streaming. Average round-trip came in under 500ms. I also redesigned the Stripe checkout flow — removed 2 steps, reduced drop-off.",
+  "webrtc": "At Gatepax, I owned the voice AI frontend. The key engineering decision was skipping REST and going direct WebRTC → Whisper streaming. Average round-trip came in under 500ms. I also redesigned the Stripe checkout flow — removed 2 steps, reduced drop-off.",
+  
+  "b-roll": "Smart B-Roll Inserter uses a 3-stage AI pipeline: Whisper for speech recognition, GPT-4o Vision for scene understanding, then vector embeddings to semantically match A-roll speech with footage. FFmpeg handles frame-precise clip insertion.",
+  "video": "Smart B-Roll Inserter uses a 3-stage AI pipeline: Whisper for speech recognition, GPT-4o Vision for scene understanding, then vector embeddings to semantically match A-roll speech with footage. FFmpeg handles frame-precise clip insertion.",
+  "whisper": "Smart B-Roll Inserter uses a 3-stage AI pipeline: Whisper for speech recognition, GPT-4o Vision for scene understanding, then vector embeddings to semantically match A-roll speech with footage. FFmpeg handles frame-precise clip insertion.",
+  
+  "voicesdr": "AiVoiceSDR is a fully autonomous sales agent. The key was keeping end-to-end latency under 800ms — I used local Piper TTS instead of cloud to kill the network round-trip. It extracts structured lead data and maintains conversation state across the full call.",
+  "sdr": "AiVoiceSDR is a fully autonomous sales agent. The key was keeping end-to-end latency under 800ms — I used local Piper TTS instead of cloud to kill the network round-trip. It extracts structured lead data and maintains conversation state across the full call.",
+  "sales": "AiVoiceSDR is a fully autonomous sales agent. The key was keeping end-to-end latency under 800ms — I used local Piper TTS instead of cloud to kill the network round-trip. It extracts structured lead data and maintains conversation state across the full call.",
+  
+  "product": "At Recyclaro, I did a full UX audit and re-architected the IA from feature-based to intent-driven flows. The core insight: users don't think in features, they think in goals. Mapping to those goals reduced navigation drop-offs.",
+  "ux": "At Recyclaro, I did a full UX audit and re-architected the IA from feature-based to intent-driven flows. The core insight: users don't think in features, they think in goals. Mapping to those goals reduced navigation drop-offs.",
+  "recyclaro": "At Recyclaro, I did a full UX audit and re-architected the IA from feature-based to intent-driven flows. The core insight: users don't think in features, they think in goals. Mapping to those goals reduced navigation drop-offs.",
+  "thinking": "At Recyclaro, I did a full UX audit and re-architected the IA from feature-based to intent-driven flows. The core insight: users don't think in features, they think in goals. Mapping to those goals reduced navigation drop-offs.",
+  
+  "tradeoff": "I think in trade-offs, not solutions. For the voice pipeline, I traded offline capability for real-time fidelity. For B-Roll AI, I chose accuracy over speed. Every constraint shapes the product.",
+  "decision": "I think in trade-offs, not solutions. For the voice pipeline, I traded offline capability for real-time fidelity. For B-Roll AI, I chose accuracy over speed. Every constraint shapes the product.",
+  "why": "I think in trade-offs, not solutions. For the voice pipeline, I traded offline capability for real-time fidelity. For B-Roll AI, I chose accuracy over speed. Every constraint shapes the product.",
+  
+  "hire": "Yes — I'm actively looking for product-engineering roles where thinking matters as much as coding. I work best in environments that ship real products, not endless feature lists.",
+  "work": "Yes — I'm actively looking for product-engineering roles where thinking matters as much as coding. I work best in environments that ship real products, not endless feature lists.",
+  "available": "Yes — I'm actively looking for product-engineering roles where thinking matters as much as coding. I work best in environments that ship real products, not endless feature lists.",
+  "open": "Yes — I'm actively looking for product-engineering roles where thinking matters as much as coding. I work best in environments that ship real products, not endless feature lists.",
+  
+  "hello": "Hey! I'm Raj's AI assistant. Ask me about any of his projects, his product thinking approach, or whether he's open to work.",
+  "hi": "Hey! I'm Raj's AI assistant. Ask me about any of his projects, his product thinking approach, or whether he's open to work."
 };
 
-const SUGGESTIONS = ["projects", "skills", "about", "contact"];
+const SUGGESTIONS = ["Voice AI approach", "Recyclaro UX audit", "Trade-off thinking", "Open to work?"];
 
 export function Chatbot() {
   const [messages, setMessages] = useState<Message[]>([
-    { id: "1", text: "Welcome to RAJ_OS v1.0", isUser: false },
-    { id: "2", text: "Type 'help' for a list of commands or ask a question.", isUser: false }
+    { id: "1", text: "Hey! I'm Raj's AI assistant. Ask me about any of his projects, his product thinking approach, or whether he's open to work.", isUser: false }
   ]);
   const [input, setInput] = useState("");
   const [isTyping, setIsTyping] = useState(false);
-  const inputRef = useRef<HTMLInputElement>(null);
   const endRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -37,122 +59,116 @@ export function Chatbot() {
     const userMsg: Message = { id: Date.now().toString(), text: cmd, isUser: true };
     setMessages(prev => [...prev, userMsg]);
     setInput("");
-
-    if (cmd.toLowerCase() === "clear") {
-      setMessages([]);
-      return;
-    }
-
     setIsTyping(true);
 
-    // Simulate thinking/typing
     setTimeout(() => {
-      let response = "Command not recognized. Type 'help' for available commands.";
+      let response = "I don't have a specific answer for that, but try asking about the voice pipeline, the UX audit, or my trade-off philosophy.";
       const lowerCmd = cmd.toLowerCase().trim();
       
-      if (QA_DATABASE[lowerCmd]) {
-        response = QA_DATABASE[lowerCmd];
-      } else {
-        // fuzzy check
-        if (lowerCmd.includes("project")) response = QA_DATABASE["projects"];
-        if (lowerCmd.includes("skill") || lowerCmd.includes("tech")) response = QA_DATABASE["skills"];
-        if (lowerCmd.includes("who")) response = QA_DATABASE["about"];
+      for (const [key, answer] of Object.entries(QA_DATABASE)) {
+        if (lowerCmd.includes(key)) {
+          response = answer;
+          break;
+        }
       }
 
       setMessages(prev => [...prev, { id: (Date.now() + 1).toString(), text: response, isUser: false }]);
       setIsTyping(false);
-      
-      // Auto-focus input after reply
-      setTimeout(() => inputRef.current?.focus(), 10);
-    }, 600);
+    }, 800);
   };
 
   return (
-    <section className="py-24 px-6 md:px-12 lg:px-24 max-w-4xl mx-auto">
+    <section className="py-32 px-6 md:px-12 lg:px-24 max-w-4xl mx-auto">
       <motion.div 
-        initial={{ opacity: 0, y: 50 }}
+        initial={{ opacity: 0, y: 30 }}
         whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
+        viewport={{ once: true, margin: "-50px" }}
         transition={{ type: "spring", stiffness: 100, damping: 15 }}
       >
-        <h2 className="text-4xl md:text-6xl font-display uppercase tracking-tighter mb-8 text-secondary-foreground text-center">
-          Interactive Terminal
-        </h2>
-
-        <div className="bg-[#0a0a0a] rounded-lg border-[6px] border-primary p-2 overflow-hidden shadow-2xl transform rotate-1 hover:rotate-0 transition-transform duration-300">
+        <div className="bg-[#0D0D0D] rounded-3xl border border-white/10 overflow-hidden shadow-2xl flex flex-col h-[600px]">
           
-          {/* Terminal Window */}
-          <div className="bg-[#111] h-[500px] font-mono text-[#0f0] p-6 flex flex-col rounded text-sm md:text-base relative overflow-hidden">
+          {/* Header */}
+          <div className="p-6 border-b border-white/10 flex items-center gap-3 bg-[#0a0a0a]">
+            <Sparkles className="text-primary w-5 h-5" />
+            <h2 className="text-xl font-sans font-bold text-white tracking-tight">Ask Raj Anything</h2>
+            <motion.div 
+              animate={{ opacity: [1, 0.4, 1] }} 
+              transition={{ repeat: Infinity, duration: 2 }}
+              className="w-2 h-2 rounded-full bg-primary ml-2 shadow-[0_0_8px_rgba(184,255,0,0.8)]"
+            />
+          </div>
+
+          {/* Chat Window */}
+          <div className="flex-1 overflow-y-auto p-6 space-y-6 bg-[#0D0D0D]">
+            <AnimatePresence>
+              {messages.map((msg) => (
+                <motion.div
+                  key={msg.id}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className={`flex ${msg.isUser ? "justify-end" : "justify-start"}`}
+                >
+                  <div className={`max-w-[80%] rounded-2xl px-5 py-3 font-sans text-[15px] leading-relaxed ${
+                    msg.isUser 
+                      ? "bg-primary text-primary-foreground font-medium rounded-tr-sm" 
+                      : "bg-white/5 text-white/90 border border-white/10 rounded-tl-sm"
+                  }`}>
+                    {msg.text}
+                  </div>
+                </motion.div>
+              ))}
+            </AnimatePresence>
             
-            {/* Scanline effect */}
-            <div className="absolute inset-0 bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(255,0,0,0.06),rgba(0,255,0,0.02),rgba(0,0,255,0.06))] bg-[length:100%_4px,3px_100%] pointer-events-none z-10" />
-
-            <div className="flex-1 overflow-y-auto space-y-4 pb-4 z-20">
-              <AnimatePresence>
-                {messages.map((msg) => (
-                  <motion.div
-                    key={msg.id}
-                    initial={{ opacity: 0, x: -10 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    className="flex gap-2"
-                  >
-                    <span className="text-[#0a0] shrink-0">
-                      {msg.isUser ? "guest@portfolio:~$" : "raj@os:~$"}
-                    </span>
-                    <span className={msg.isUser ? "text-white" : "text-[#0f0]"}>
-                      {msg.text}
-                    </span>
-                  </motion.div>
-                ))}
-              </AnimatePresence>
-              
-              {isTyping && (
-                <div className="flex gap-2">
-                  <span className="text-[#0a0]">raj@os:~$</span>
-                  <motion.span 
-                    animate={{ opacity: [0, 1, 0] }} 
-                    transition={{ repeat: Infinity, duration: 0.8 }}
-                    className="bg-[#0f0] w-2 h-5 inline-block"
-                  />
+            {isTyping && (
+              <motion.div 
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="flex justify-start"
+              >
+                <div className="bg-white/5 border border-white/10 rounded-2xl rounded-tl-sm px-5 py-4 flex gap-1 items-center">
+                  <motion.div animate={{ y: [0, -3, 0] }} transition={{ repeat: Infinity, duration: 0.6, delay: 0 }} className="w-1.5 h-1.5 rounded-full bg-white/50" />
+                  <motion.div animate={{ y: [0, -3, 0] }} transition={{ repeat: Infinity, duration: 0.6, delay: 0.2 }} className="w-1.5 h-1.5 rounded-full bg-white/50" />
+                  <motion.div animate={{ y: [0, -3, 0] }} transition={{ repeat: Infinity, duration: 0.6, delay: 0.4 }} className="w-1.5 h-1.5 rounded-full bg-white/50" />
                 </div>
-              )}
-              <div ref={endRef} />
-            </div>
+              </motion.div>
+            )}
+            <div ref={endRef} />
+          </div>
 
+          {/* Input Area */}
+          <div className="p-6 bg-[#0a0a0a] border-t border-white/10">
+            <div className="flex flex-wrap gap-2 mb-4">
+              {SUGGESTIONS.map(cmd => (
+                <button
+                  key={cmd}
+                  onClick={() => handleCommand(cmd)}
+                  className="bg-white/5 border border-white/10 text-white/70 font-sans text-xs px-4 py-2 rounded-full hover:bg-primary hover:text-black hover:border-primary transition-colors hover-target"
+                >
+                  {cmd}
+                </button>
+              ))}
+            </div>
+            
             <form 
               onSubmit={(e) => { e.preventDefault(); handleCommand(input); }}
-              className="flex items-center gap-2 border-t border-[#333] pt-4 mt-2 z-20"
+              className="flex items-center gap-2 bg-white/5 border border-white/10 rounded-full pl-6 pr-2 py-2 focus-within:border-primary/50 focus-within:bg-white/10 transition-colors"
             >
-              <span className="text-[#0a0] shrink-0">guest@portfolio:~$</span>
               <input
-                ref={inputRef}
                 type="text"
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
-                className="flex-1 bg-transparent border-none outline-none text-white focus:ring-0 p-0 font-mono caret-transparent"
+                placeholder="Ask a question..."
+                className="flex-1 bg-transparent border-none outline-none text-white focus:ring-0 p-0 font-sans placeholder:text-white/30"
                 autoComplete="off"
-                spellCheck="false"
               />
-              <motion.span 
-                animate={{ opacity: [1, 0] }} 
-                transition={{ repeat: Infinity, duration: 0.8 }}
-                className="bg-white w-2 h-5 inline-block -ml-[calc(100%-1ch)]"
-                style={{ marginLeft: `-${Math.max(1, input.length)}ch`}}
-              />
-            </form>
-          </div>
-
-          {/* Quick Commands below terminal */}
-          <div className="flex flex-wrap gap-2 mt-4 px-2">
-            {SUGGESTIONS.map(cmd => (
-              <button
-                key={cmd}
-                onClick={() => handleCommand(cmd)}
-                className="bg-primary text-primary-foreground font-mono text-xs px-3 py-1 font-bold uppercase hover:bg-white hover:text-black transition-colors"
+              <button 
+                type="submit"
+                disabled={!input.trim()}
+                className="bg-primary text-black p-2 rounded-full hover:bg-white transition-colors disabled:opacity-50 disabled:hover:bg-primary hover-target"
               >
-                ./{cmd}.sh
+                <Send size={18} />
               </button>
-            ))}
+            </form>
           </div>
 
         </div>

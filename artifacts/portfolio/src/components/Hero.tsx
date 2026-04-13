@@ -3,14 +3,32 @@ import { useEffect, useState } from "react";
 
 export function Hero() {
   const [mounted, setMounted] = useState(false);
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   
   useEffect(() => {
     setMounted(true);
+    const handleMouseMove = (e: MouseEvent) => {
+      setMousePosition({ x: e.clientX, y: e.clientY });
+    };
+    window.addEventListener("mousemove", handleMouseMove);
+    return () => {
+      window.removeEventListener("mousemove", handleMouseMove);
+    };
   }, []);
 
   return (
     <section className="relative min-h-[100dvh] flex flex-col items-center justify-center overflow-hidden px-4 py-20 bg-background text-foreground">
       
+      {/* Background glow tracking cursor */}
+      {mounted && (
+        <div 
+          className="pointer-events-none fixed inset-0 z-0 transition-opacity duration-300"
+          style={{
+            background: `radial-gradient(600px circle at ${mousePosition.x}px ${mousePosition.y}px, rgba(184, 255, 0, 0.06), transparent 80%)`
+          }}
+        />
+      )}
+
       {/* Background Marquee Top */}
       <div className="absolute top-10 left-0 w-full overflow-hidden whitespace-nowrap opacity-20 pointer-events-none rotate-2 select-none z-0">
         <div className="animate-marquee inline-block font-display text-4xl tracking-widest text-primary">
@@ -21,8 +39,9 @@ export function Hero() {
 
       <div className="z-10 w-full max-w-7xl mx-auto flex flex-col items-center relative">
         <motion.div
-          initial={{ y: 100, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
+          initial={{ y: 30, opacity: 0 }}
+          whileInView={{ y: 0, opacity: 1 }}
+          viewport={{ once: true, margin: "-50px" }}
           transition={{ type: "spring", stiffness: 100, damping: 15 }}
           className="text-center w-full relative z-20"
         >
@@ -39,13 +58,17 @@ export function Hero() {
         </motion.div>
 
         <motion.div
-          initial={{ opacity: 0, scale: 0.8, rotate: -5 }}
-          animate={{ opacity: 1, scale: 1, rotate: -2 }}
-          transition={{ delay: 0.5, type: "spring", stiffness: 100, damping: 15 }}
-          className="mt-12 z-30"
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-50px" }}
+          transition={{ delay: 0.2, type: "spring", stiffness: 100, damping: 15 }}
+          className="mt-12 z-30 flex flex-col items-center gap-4"
         >
-          <p className="text-xl md:text-3xl font-sans font-medium max-w-2xl text-center border-4 border-foreground p-4 bg-primary text-primary-foreground shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] dark:shadow-[8px_8px_0px_0px_rgba(255,255,255,1)]">
-            I build products, not just interfaces.
+          <p className="text-2xl md:text-5xl font-display uppercase tracking-tight max-w-3xl text-center text-foreground px-4">
+            I design systems, not just screens.
+          </p>
+          <p className="text-lg md:text-2xl font-sans font-medium max-w-2xl text-center border-4 border-foreground p-4 bg-primary text-primary-foreground shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] dark:shadow-[8px_8px_0px_0px_rgba(255,255,255,1)]">
+            The gap between a good idea and a shipped product is where I live.
           </p>
         </motion.div>
       </div>
