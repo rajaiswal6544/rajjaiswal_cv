@@ -11,43 +11,95 @@ type NodeData = {
 };
 
 const pipeline1: NodeData[] = [
-  { label: "Client", tech: "Browser UI", reasoning: "Lightweight React SPA. Direct access to navigator.mediaDevices for microphone input." },
-  { label: "Transport", tech: "WebRTC", reasoning: "Chosen over REST/WebSocket for true duplex audio without buffering delay. Alternatives: AudioWorklet-only (too limited), REST polling (unacceptable 200ms+ latency)." },
-  { label: "Process", tech: "Whisper", reasoning: "OpenAI Whisper for accuracy. Alternatives considered: DeepSpeech (worse noise handling), Web Speech API (too inconsistent).", hasBottleneck: "right", bottleneckTooltip: "Latency cliff: 300–500ms window" },
-  { label: "Output", tech: "TTS Stream", reasoning: "Local TTS to eliminate cloud round-trip latency. Traded slight voice quality for guaranteed sub-100ms synthesis. Alternative: ElevenLabs (beautiful, but 300ms+ latency kills conversational flow)." }
+  {
+    label: "Discover",
+    tech: "Audit + Notes",
+    reasoning: "I start by understanding where users get stuck and where the product is doing too much work in the wrong place.",
+  },
+  {
+    label: "Map",
+    tech: "Flows",
+    reasoning: "User journeys help me align screens with intent instead of isolated UI components.",
+  },
+  {
+    label: "Build",
+    tech: "React UI",
+    reasoning: "I care about implementation details because product quality often breaks in state, async handling, and edge cases.",
+    hasBottleneck: "right",
+    bottleneckTooltip: "Most UX issues become state and feedback issues in code.",
+  },
+  {
+    label: "Ship",
+    tech: "Deploy + Iterate",
+    reasoning: "A feature only becomes useful after it reaches users and we learn what still feels rough.",
+  },
 ];
 
 const pipeline2: NodeData[] = [
-  { label: "Input", tech: "A-Roll Audio", reasoning: "Raw audio extraction from the editor timeline using Web Audio API." },
-  { label: "STT", tech: "Whisper", reasoning: "Generates high-accuracy transcriptions with word-level timestamps required for alignment." },
-  { label: "Vision", tech: "GPT-4o", reasoning: "Vision model needed to understand both transcript intent AND visual context. GPT-4 without vision couldn't match semantic context to footage frames.", hasBottleneck: "right", bottleneckTooltip: "Compute bottleneck: GPT-4o vision call ~1.2s" },
-  { label: "Align", tech: "Embeddings", reasoning: "Vector similarity search to semantically match the spoken intent with the visual context of the B-roll." },
-  { label: "Render", tech: "FFmpeg", reasoning: "Industry-standard for frame-precise video manipulation. Node.js child_process for non-blocking execution. Alternative: Web Codecs API (browser-only, no server-side)." }
+  {
+    label: "Input",
+    tech: "Browser UI",
+    reasoning: "Good real-time experiences begin with a clear interface that reacts fast and communicates state clearly.",
+  },
+  {
+    label: "Transport",
+    tech: "WebRTC / WS",
+    reasoning: "For low-latency interaction, transport decisions shape the user experience as much as the UI design does.",
+  },
+  {
+    label: "Process",
+    tech: "AI Services",
+    reasoning: "Speech, vision, or language models are useful only when their latency and failure states are handled deliberately.",
+    hasBottleneck: "right",
+    bottleneckTooltip: "Latency is usually the experience bottleneck in AI features.",
+  },
+  {
+    label: "Feedback",
+    tech: "Streaming UI",
+    reasoning: "Users should feel progress immediately. Async feedback is often what makes advanced systems usable.",
+  },
+  {
+    label: "Learn",
+    tech: "Iteration",
+    reasoning: "The implementation is not complete until the interaction feels understandable and dependable for users.",
+  },
 ];
 
-const Node = ({ 
-  data, delay = 0, onClick, isActive, showAll
-}: { 
-  data: NodeData, delay?: number, onClick: () => void, isActive: boolean, showAll: boolean
+const Node = ({
+  data,
+  delay = 0,
+  onClick,
+  isActive,
+  showAll,
+}: {
+  data: NodeData;
+  delay?: number;
+  onClick: () => void;
+  isActive: boolean;
+  showAll: boolean;
 }) => {
   const showTooltip = isActive || showAll;
 
   return (
-    <div className="relative group/node flex flex-col items-center">
-      <motion.button 
+    <div className="relative flex flex-col items-center group/node">
+      <motion.button
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, margin: "-50px" }}
         transition={{ type: "spring", stiffness: 100, damping: 15, delay }}
         onClick={onClick}
-        className={`relative z-10 flex flex-col items-center justify-center p-4 bg-background border-4 ${isActive ? 'border-primary' : 'border-foreground'} shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)] w-32 md:w-40 text-center hover:bg-primary hover:text-primary-foreground transition-colors cursor-none hover-target`}
+        className={`hover-target relative z-10 flex w-32 flex-col items-center justify-center border-4 bg-background p-4 text-center shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-colors md:w-40 ${
+          isActive ? "border-primary" : "border-foreground"
+        } hover:bg-primary hover:text-primary-foreground`}
       >
-        <span className="font-display text-lg md:text-xl mb-1 text-foreground uppercase">{data.label}</span>
-        <span className={`text-[10px] md:text-xs font-mono font-bold ${isActive ? 'text-foreground' : 'text-primary'}`}>{data.tech}</span>
-        
+        <span className="mb-1 text-lg uppercase text-foreground md:text-xl">{data.label}</span>
+        <span className={`font-mono text-[10px] font-bold md:text-xs ${isActive ? "text-foreground" : "text-primary"}`}>
+          {data.tech}
+        </span>
+
         {data.hasBottleneck && (
-          <div className="absolute -right-2 -top-2 w-4 h-4 bg-destructive rounded-full border-2 border-background animate-pulse group-hover/node:scale-125 transition-transform">
-            <div className="absolute top-6 right-0 bg-destructive text-destructive-foreground text-[10px] p-2 rounded w-max opacity-0 group-hover/node:opacity-100 pointer-events-none transition-opacity z-50">
+          <div className="absolute -top-2 -right-2 h-4 w-4 rounded-full border-2 border-background bg-destructive transition-transform group-hover/node:scale-125">
+            <div className="pointer-events-none absolute top-6 right-0 z-50 w-max bg-destructive p-2 text-[10px] text-destructive-foreground opacity-0 transition-opacity group-hover/node:opacity-100">
               {data.bottleneckTooltip}
             </div>
           </div>
@@ -60,9 +112,9 @@ const Node = ({
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 10 }}
             exit={{ opacity: 0, y: -10 }}
-            className="absolute top-full mt-2 w-64 bg-foreground text-background p-4 text-sm font-sans font-medium border-l-4 border-primary z-20 shadow-xl pointer-events-none"
+            className="pointer-events-none absolute top-full z-20 mt-2 w-64 border-l-4 border-primary bg-foreground p-4 text-sm font-medium text-background shadow-xl"
           >
-            <p className="font-mono text-xs text-primary mb-1 uppercase font-bold tracking-widest">Why this tech?</p>
+            <p className="mb-1 font-mono text-xs font-bold uppercase tracking-widest text-primary">Why it matters</p>
             {data.reasoning}
           </motion.div>
         )}
@@ -71,14 +123,26 @@ const Node = ({
   );
 };
 
-const Edge = ({ delay = 0, horizontal = false, length = "w-8 md:w-16" }: { delay?: number, horizontal?: boolean, length?: string }) => (
-  <div className={`relative ${horizontal ? `${length} h-1` : `h-8 w-1 mx-auto`} bg-foreground overflow-hidden rounded-full shrink-0`}>
-    <motion.div 
+const Edge = ({
+  delay = 0,
+  horizontal = false,
+  length = "w-8 md:w-16",
+}: {
+  delay?: number;
+  horizontal?: boolean;
+  length?: string;
+}) => (
+  <div
+    className={`relative overflow-hidden rounded-full bg-foreground shrink-0 ${
+      horizontal ? `${length} h-1` : "mx-auto h-8 w-1"
+    }`}
+  >
+    <motion.div
       initial={{ scaleX: horizontal ? 0 : 1, scaleY: horizontal ? 1 : 0, originX: 0, originY: 0 }}
       whileInView={{ scaleX: 1, scaleY: 1 }}
       viewport={{ once: true, margin: "-50px" }}
       transition={{ duration: 0.8, delay, ease: "circOut" }}
-      className={`absolute inset-0 bg-primary ${horizontal ? '' : 'origin-top'}`}
+      className={`absolute inset-0 bg-primary ${horizontal ? "" : "origin-top"}`}
     />
   </div>
 );
@@ -88,98 +152,103 @@ export function TechnicalDepth() {
   const [showAllReasoning, setShowAllReasoning] = useState(false);
 
   return (
-    <section className="py-32 px-6 md:px-12 lg:px-24 bg-background border-t-8 border-foreground relative overflow-hidden">
-      {/* Blueprint grid background */}
-      <div className="absolute inset-0 z-0 opacity-5" 
-        style={{ backgroundImage: 'linear-gradient(currentColor 1px, transparent 1px), linear-gradient(90deg, currentColor 1px, transparent 1px)', backgroundSize: '40px 40px' }} 
+    <section className="relative overflow-hidden border-t-8 border-foreground bg-background px-6 py-32 md:px-12 lg:px-24">
+      <div
+        className="absolute inset-0 z-0 opacity-5"
+        style={{
+          backgroundImage:
+            "linear-gradient(currentColor 1px, transparent 1px), linear-gradient(90deg, currentColor 1px, transparent 1px)",
+          backgroundSize: "40px 40px",
+        }}
       />
 
-      <div className="max-w-6xl mx-auto relative z-10">
-        <motion.div 
+      <div className="relative z-10 mx-auto max-w-6xl">
+        <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-50px" }}
           transition={{ type: "spring", stiffness: 100, damping: 15 }}
-          className="mb-24 flex flex-col md:flex-row justify-between items-end gap-8 border-b-4 border-foreground pb-8"
+          className="mb-24 flex flex-col items-end justify-between gap-8 border-b-4 border-foreground pb-8 md:flex-row"
         >
           <div>
-            <div className="inline-block bg-foreground text-background px-6 py-2 mb-4">
-              <h2 className="text-5xl md:text-7xl font-display uppercase tracking-tighter">Architecture</h2>
+            <div className="mb-4 inline-block bg-foreground px-6 py-2 text-background">
+              <h2 className="text-5xl tracking-tighter md:text-7xl">How I Build</h2>
             </div>
-            <p className="text-xl font-sans font-medium text-foreground max-w-xl">
-              Systems over syntax. Sketches of how my apps actually work under the hood. Click nodes to see engineering decisions.
+            <p className="max-w-xl font-sans text-xl font-medium text-foreground">
+              Two ways I usually think about execution: improving a product journey and designing an interaction
+              that still feels good when the system behind it gets complex.
             </p>
           </div>
-          
-          <button 
+
+          <button
             onClick={() => {
               setShowAllReasoning(!showAllReasoning);
               setActiveNode(null);
             }}
-            className="flex items-center gap-2 font-mono text-sm uppercase tracking-widest font-bold bg-primary text-primary-foreground px-6 py-3 border-4 border-foreground hover-target"
+            className="hover-target flex items-center gap-2 border-4 border-foreground bg-primary px-6 py-3 font-mono text-sm font-bold uppercase tracking-widest text-primary-foreground"
           >
             <Info size={16} />
-            {showAllReasoning ? "Hide Reasoning" : "Show Reasoning"}
+            {showAllReasoning ? "Hide Notes" : "Show Notes"}
           </button>
         </motion.div>
 
         <div className="space-y-48">
-          {/* Pipeline 1 */}
           <div className="relative">
-            <div className="absolute -left-4 -top-8 text-primary font-mono text-sm font-bold border-2 border-primary px-2 py-1 rounded-full bg-background">
-              FIG 1: Voice Loop
+            <div className="absolute -top-8 -left-4 rounded-full border-2 border-primary bg-background px-2 py-1 font-mono text-sm font-bold text-primary">
+              FIG 1: Product work
             </div>
-            <h3 className="text-3xl font-display uppercase text-foreground mb-12">Real-time Voice Pipeline</h3>
-            
-            <div className="flex flex-col md:flex-row items-center justify-start gap-2 relative min-h-[160px]">
-              {pipeline1.map((node, i) => (
-                <div key={node.label} className="flex flex-col md:flex-row items-center">
-                  <Node 
-                    data={node} 
-                    delay={i * 0.2} 
+            <h3 className="mb-12 text-3xl text-foreground">From friction to shipped interface</h3>
+
+            <div className="relative flex min-h-[160px] flex-col items-center justify-start gap-2 md:flex-row">
+              {pipeline1.map((node, index) => (
+                <div key={node.label} className="flex flex-col items-center md:flex-row">
+                  <Node
+                    data={node}
+                    delay={index * 0.2}
                     onClick={() => setActiveNode(activeNode === node.label ? null : node.label)}
                     isActive={activeNode === node.label}
                     showAll={showAllReasoning}
                   />
-                  {i < pipeline1.length - 1 && <Edge horizontal delay={i * 0.2 + 0.1} />}
+                  {index < pipeline1.length - 1 && <Edge horizontal delay={index * 0.2 + 0.1} />}
                 </div>
               ))}
             </div>
 
-            <div className="mt-16 bg-muted/50 p-6 border-l-4 border-primary">
-              <h4 className="font-mono text-sm uppercase font-bold mb-2">Why this architecture?</h4>
+            <div className="mt-16 border-l-4 border-primary bg-muted/50 p-6">
+              <h4 className="mb-2 font-mono text-sm font-bold uppercase">Why this matters</h4>
               <p className="font-sans text-lg font-medium leading-relaxed">
-                Direct streaming over WebSocket + WebRTC eliminates the REST overhead. Each hop adds ~50ms. With 4 hops in a naive implementation, you're already at 200ms before any processing — that's the UX cliff.
+                Good frontend work is rarely just component work. It is usually the translation layer between user
+                intent, business logic, and a flow that needs to feel simple.
               </p>
             </div>
           </div>
 
-          {/* Pipeline 2 */}
           <div className="relative">
-             <div className="absolute -left-4 -top-8 text-primary font-mono text-sm font-bold border-2 border-primary px-2 py-1 rounded-full bg-background">
-              FIG 2: Video Gen
+            <div className="absolute -top-8 -left-4 rounded-full border-2 border-primary bg-background px-2 py-1 font-mono text-sm font-bold text-primary">
+              FIG 2: Real-time systems
             </div>
-            <h3 className="text-3xl font-display uppercase text-foreground mb-12">AI Video Pipeline</h3>
-            
-            <div className="flex flex-col md:flex-row items-center justify-start gap-2 flex-wrap xl:flex-nowrap min-h-[160px]">
-               {pipeline2.map((node, i) => (
-                <div key={node.label} className="flex flex-col md:flex-row items-center">
-                  <Node 
-                    data={node} 
-                    delay={i * 0.2} 
+            <h3 className="mb-12 text-3xl text-foreground">Interfaces shaped by technical constraints</h3>
+
+            <div className="relative flex min-h-[160px] flex-col items-center justify-start gap-2 flex-wrap md:flex-row xl:flex-nowrap">
+              {pipeline2.map((node, index) => (
+                <div key={node.label} className="flex flex-col items-center md:flex-row">
+                  <Node
+                    data={node}
+                    delay={index * 0.2}
                     onClick={() => setActiveNode(activeNode === node.label ? null : node.label)}
                     isActive={activeNode === node.label}
                     showAll={showAllReasoning}
                   />
-                  {i < pipeline2.length - 1 && <Edge horizontal delay={i * 0.2 + 0.1} />}
+                  {index < pipeline2.length - 1 && <Edge horizontal delay={index * 0.2 + 0.1} />}
                 </div>
               ))}
             </div>
 
-            <div className="mt-16 bg-muted/50 p-6 border-l-4 border-primary">
-              <h4 className="font-mono text-sm uppercase font-bold mb-2">Why this architecture?</h4>
+            <div className="mt-16 border-l-4 border-primary bg-muted/50 p-6">
+              <h4 className="mb-2 font-mono text-sm font-bold uppercase">Why this matters</h4>
               <p className="font-sans text-lg font-medium leading-relaxed">
-                Processing B-roll suggestions asynchronously decoupled the AI latency from the editing UX. Users see the timeline immediately; suggestions load in background. This was the key product insight.
+                I enjoy frontend work most when technical constraints directly influence the user experience. That
+                is where system design and product judgment start to overlap.
               </p>
             </div>
           </div>
