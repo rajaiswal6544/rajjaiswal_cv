@@ -60,9 +60,9 @@
   --popover-foreground: 0 0% 10%;
   --popover-border: 0 0% 10%;
 
-  /* Electric Lime */
-  --primary: 73 100% 50%;
-  --primary-foreground: 0 0% 10%;
+  /* Saffron Orange */
+  --primary: 21 90% 48%;
+  --primary-foreground: 0 0% 98%;
 
   /* Charcoal */
   --secondary: 0 0% 10%;
@@ -71,14 +71,14 @@
   --muted: 40 20% 85%;
   --muted-foreground: 0 0% 30%;
 
-  --accent: 73 100% 50%;
-  --accent-foreground: 0 0% 10%;
+  --accent: 21 90% 48%;
+  --accent-foreground: 0 0% 98%;
 
   --destructive: 0 84.2% 60.2%;
   --destructive-foreground: 0 0% 98%;
 
   --input: 0 0% 10%;
-  --ring: 73 100% 50%;
+  --ring: 21 90% 48%;
 
   --app-font-sans: 'Space Grotesk', sans-serif;
   --app-font-display: 'Anton', sans-serif;
@@ -97,16 +97,16 @@
   --popover: 0 0% 10%;
   --popover-foreground: 40 33% 94%;
   --popover-border: 40 33% 94%;
-  --primary: 73 100% 50%;
+  --primary: 24 93% 55%;
   --primary-foreground: 0 0% 10%;
   --secondary: 40 33% 94%;
   --secondary-foreground: 0 0% 10%;
   --muted: 0 0% 20%;
   --muted-foreground: 40 33% 70%;
-  --accent: 73 100% 50%;
+  --accent: 24 93% 55%;
   --accent-foreground: 0 0% 10%;
   --input: 40 33% 94%;
-  --ring: 73 100% 50%;
+  --ring: 24 93% 55%;
 }
 
 @layer base {

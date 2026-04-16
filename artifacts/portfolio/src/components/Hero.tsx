@@ -91,7 +91,7 @@ export function Hero() {
               href="/Raj_Jaiswal_Resume.pdf"
               target="_blank"
               rel="noreferrer"
-              className="hover-target border-4 border-foreground bg-foreground px-8 py-4 font-display text-2xl uppercase text-background shadow-[6px_6px_0px_0px_rgba(184,255,0,1)] transition-transform hover:-translate-y-1"
+              className="hover-target border-4 border-foreground bg-foreground px-8 py-4 font-display text-2xl uppercase text-background shadow-[6px_6px_0px_0px_rgba(234,88,12,1)] transition-transform hover:-translate-y-1"
             >
               View Resume
             </a>

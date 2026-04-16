@@ -112,7 +112,7 @@ export function Chatbot() {
             <motion.div
               animate={{ opacity: [1, 0.4, 1] }}
               transition={{ repeat: Infinity, duration: 2 }}
-              className="ml-2 h-2 w-2 rounded-full bg-primary shadow-[0_0_8px_rgba(184,255,0,0.8)]"
+              className="ml-2 h-2 w-2 rounded-full bg-primary shadow-[0_0_8px_rgba(234,88,12,0.8)]"
             />
           </div>
 

@@ -67,7 +67,7 @@ export function HowIThink() {
               transition={{ type: "spring", stiffness: 100, damping: 15, delay: index * 0.2 }}
               className="relative z-10 flex flex-1 flex-col"
             >
-              <div className="mb-6 inline-block w-max rotate-[-2deg] bg-foreground px-2 text-5xl font-black text-primary shadow-[4px_4px_0px_0px_rgba(184,255,0,1)]">
+              <div className="mb-6 inline-block w-max rotate-[-2deg] bg-foreground px-2 text-5xl font-black text-primary shadow-[4px_4px_0px_0px_rgba(234,88,12,1)]">
                 {step.num}
               </div>
               <h3 className="mb-4 text-2xl tracking-tight">{step.title}</h3>
